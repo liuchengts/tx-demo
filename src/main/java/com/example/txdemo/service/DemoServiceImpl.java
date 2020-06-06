@@ -1,5 +1,6 @@
 package com.example.txdemo.service;
 
+import com.example.txdemo.common.TxSupport;
 import com.example.txdemo.model.DemoAModel;
 import com.example.txdemo.model.DemoBModel;
 import com.example.txdemo.repository.DemoAModelRepository;
@@ -23,7 +24,8 @@ public class DemoServiceImpl implements DemoService {
     ObjectMapper objectMapper;
     @Autowired
     DemoBService demoBService;
-
+    @Autowired
+    TxSupport txSupport;
 
     @Transactional
     @Override
@@ -43,10 +45,23 @@ public class DemoServiceImpl implements DemoService {
         return map;
     }
 
-     void test1() {
+    void test1() {
         demoAModelRepository.save(DemoAModel.builder().cc(1).build());
         if (1 == 1) throw new RuntimeException("自定义异常");
         demoBModelRepository.save(DemoBModel.builder().cc(1).build());
+    }
+
+    void test2() {
+        try {
+            //在这里单独开启事务
+            txSupport.runInNewTransaction(() -> {
+                demoAModelRepository.save(DemoAModel.builder().cc(4).build());
+            });
+        } catch (Exception e) {
+            throw new RuntimeException("发生了数据保存异常", e);
+        }
+        if (1 == 1) throw new RuntimeException("自定义异常");
+        demoBModelRepository.save(DemoBModel.builder().cc(4).build());
     }
 }
 
