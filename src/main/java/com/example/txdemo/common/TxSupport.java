@@ -6,7 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.function.Supplier;
 
 /**
- * 事务辅助类
+ * 同事分享的一个 事务辅助类
+ * <p>
+ * 可以在此基础上加上redis分布式锁，做成一个带分布式锁的事务管理工具类
  */
 public class TxSupport {
 

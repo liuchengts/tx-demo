@@ -53,9 +53,17 @@ public class DemoServiceImpl implements DemoService {
 
     void test2() {
         try {
-            //在这里单独开启事务
+            //在这里单独开启事务,带返回值
+            DemoAModel demoAModel = txSupport.runInNewTransaction(() -> {
+                return demoAModelRepository.save(DemoAModel.builder().cc(4).build());
+            });
+        } catch (Exception e) {
+            throw new RuntimeException("发生了数据保存异常", e);
+        }
+        try {
+            //在这里单独开启事务，不带返回值
             txSupport.runInNewTransaction(() -> {
-                demoAModelRepository.save(DemoAModel.builder().cc(4).build());
+                 demoAModelRepository.save(DemoAModel.builder().cc(44).build());
             });
         } catch (Exception e) {
             throw new RuntimeException("发生了数据保存异常", e);
